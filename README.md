@@ -1,20 +1,23 @@
 Deze game is gebaseerd op het template voor 4HV van het Emmauscollege Rotterdam
 
-## Mijn spel: *naam van het spel*
+## Mijn spel: Tetris
 Gemaakt door:
-- *naam van leerling 1*
-- *naam van leerling 2*
+- Carlo Roxs
 
 ## Mijn planning
 
 Basis: uitleg, spelen, afgaan en punten
 - [x] maak index.html, style.css en script.js met canvas
-- [ ] teken speler
-- [ ] beweeg speler
-- [ ] ... *(vul zelf aan)*
-- [ ] punten op scherm zetten
-- [ ] punten kunnen scoren
-- [ ] uitlegscherm
+- [ ] maak bord
+- [ ] teken bord
+- [ ] maak blokken
+- [ ] teken blokken
+- [ ] beweeg blokken met de tijd
+- [ ] voeg collision toe
+- [ ] check voor volledige lijnen
+- [ ] voeg puntentelling toe
+- [ ] teken puntentelling
+- [ ] versnel het spel met hoeveelheid punten
 
 Uitbreiding: *bedenk iets, bijvoorbeeld meer tegenstanders*
 - [ ] *later uitwerken*
