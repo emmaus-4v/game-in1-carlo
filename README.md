@@ -8,8 +8,8 @@ Gemaakt door:
 
 Basis: uitleg, spelen, afgaan en punten
 - [x] maak index.html, style.css en script.js met canvas
-- [ ] maak bord
-- [ ] teken bord
+- [x] maak bord
+- [x] teken bord
 - [ ] maak blokken
 - [ ] teken blokken
 - [ ] beweeg blokken met de tijd
