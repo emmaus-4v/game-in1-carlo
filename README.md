@@ -10,8 +10,9 @@ Basis: uitleg, spelen, afgaan en punten
 - [x] maak index.html, style.css en script.js met canvas
 - [x] maak bord
 - [x] teken bord
-- [ ] maak blokken
-- [ ] teken blokken
+- [x] maak blokken
+- [x] teken blokken
+- [ ] blokken draaien
 - [ ] beweeg blokken met de tijd
 - [ ] voeg collision toe
 - [ ] check voor volledige lijnen
