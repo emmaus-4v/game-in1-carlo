@@ -18,13 +18,13 @@ const GAMEOVER = 2;
 var spelStatus = SPELEN;
 
 const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt hebben
-    [[1, 1, 1, 1], [0, 0, 0, 0]], // Straight tetromino
-    [[1, 1, 0, 0], [1, 1, 0, 0]], // Square tetromino
-    [[0, 1, 0, 0], [1, 1, 1, 0]], // T-tetromino
-    [[1, 0, 0, 0], [1, 1, 1, 0]], // J-tetromino
-    [[0, 0, 1, 0], [1, 1, 1, 0]], // L-tetromino
-    [[0, 1, 1, 0], [1, 1, 0, 0]], // S-tetromino
-    [[1, 1, 0, 0], [0, 1, 1, 0]]  // Z-tetromino
+    [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // Straight tetromino
+    [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // Square tetromino
+    [[0, 1, 0, 0], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // T-tetromino
+    [[1, 0, 0, 0], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // J-tetromino
+    [[0, 0, 1, 0], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // L-tetromino
+    [[0, 1, 1, 0], [1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // S-tetromino
+    [[1, 1, 0, 0], [0, 1, 1, 0], [0, 0, 0, 0], [0, 0, 0, 0]]  // Z-tetromino
 ];
 
 var score = 0; // aantal behaalde punten
@@ -43,7 +43,6 @@ var reset = function () {
         }
     }
     newCurBlock();
-    curBlockPos = [0, 0, 0];
 }
 
 /* setup
@@ -62,14 +61,17 @@ function setup() {
 }
 
 var newCurBlock = function () {
-    curBlock = TetriminoVariaties[Math.floor(Math.random() * 7)]; // Pakt 1 van de 7 variaties random
+    curBlockPos = [0, 0, 0, 0];
+    var randomTetrimino = Math.floor(Math.random() * 7);
+    curBlock = TetriminoVariaties[randomTetrimino]; // Pakt 1 van de 7 variaties random
+    curBlockPos[3] = randomTetrimino;
 }
 
 
 var rotateBlock = function () {
-    var TempCurBlockPos = Array.from(Array(4), () => new Array(4));
+    var TempCurBlockPos = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
     
-            // Normale blokken
+    if(curBlockPos[3] > 1) {                // Normale blokken (T, J, L, S, Z)
     TempCurBlockPos[0][2] = curBlock[0][0]; // Eng patroon ineens (misschien ga ik dit ooit efficient doen)
     TempCurBlockPos[2][2] = curBlock[0][2]; // Nog niet uitgewerkt hoe tho
     TempCurBlockPos[2][0] = curBlock[2][2];
@@ -79,6 +81,20 @@ var rotateBlock = function () {
     TempCurBlockPos[2][1] = curBlock[1][2];
     TempCurBlockPos[1][0] = curBlock[2][1];
     TempCurBlockPos[0][1] = curBlock[1][0];
+    TempCurBlockPos[1][1] = 1;
+    } else if (curBlockPos[3] === 0) {      // Straight Tetrimino
+    TempCurBlockPos[0][0] = curBlock[0][0];
+    TempCurBlockPos[1][0] = curBlock[0][1];
+    TempCurBlockPos[2][0] = curBlock[0][2];
+    TempCurBlockPos[3][0] = curBlock[0][3];
+
+    TempCurBlockPos[0][0] = curBlock[0][0];
+    TempCurBlockPos[0][1] = curBlock[1][0];
+    TempCurBlockPos[0][2] = curBlock[2][0];
+    TempCurBlockPos[0][3] = curBlock[3][0];
+    } else {                                // Square Tetrimino
+    TempCurBlockPos = [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    }
     
     curBlock = TempCurBlockPos;
 }
@@ -97,19 +113,19 @@ var rotateBlock = function () {
   }
 }*/
 
+function keyPressed() {
+    rotateBlock();
+}
+
+
 function draw() {
 
-    // Zet het huidige blokje in het bord
-    // Alle vakjes van rij 1
-    for (var i = 0; i < 4; i++) {
-        if (curBlock[0][i] === 1) {
-            bord[curBlockPos[0]][curBlockPos[1] + i] = 1;
-        }
-    }
-    // Alle vakjes van rij 2
-    for (var i = 0; i < 4; i++) {
-        if (curBlock[1][i] === 1) {
-            bord[curBlockPos[0]+1][curBlockPos[1] + i] = 1;
+    // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol
+    for(var i = 0; i < curBlock.length; i++){
+        for(var j = 0; j < curBlock[i].length; j++){
+            if (curBlock[i][j] === 1) {
+                bord[curBlockPos[0]+i][curBlockPos[1] + j] = 1;
+            }
         }
     }
     
@@ -122,6 +138,15 @@ function draw() {
                 fill("white");
             }
             rect(j * 45, i * 45, 45, 45); // Tekent veld per blokje
+        }
+    }
+
+    // Precies hetzelfde als voor de draw, maar dan zet ie hem naar 0, zodat hij niet het bord opneemt wanneer het blokje op een andere positie is
+    for(var i = 0; i < curBlock.length; i++){
+        for(var j = 0; j < curBlock[i].length; j++){
+            if (curBlock[i][j] === 1) {
+                bord[curBlockPos[0]+i][curBlockPos[1] + j] = 0;
+            }
         }
     }
 
