@@ -114,10 +114,27 @@ var rotateBlock = function () {
 }*/
 
 function keyPressed() {
-    rotateBlock();
+    switch (keyCode) {
+        // blokkenrotatie, keycode 88 staat voor x
+        case 88:
+            rotateBlock();
+            break;
+        // blok naar links bewegen
+        case 37:
+            if (curBlockPos[1] > 0) {
+                curBlockPos[1]--;
+            }
+            break;
+        // blok naar rechts bewegen
+        case 39:
+            if (curBlockPos[1] < 7) {
+                curBlockPos[1]++;
+            }
+            break;
+    }
 }
 
-
+ 
 function draw() {
 
     // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol

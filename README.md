@@ -13,6 +13,7 @@ Basis: uitleg, spelen, afgaan en punten
 - [x] maak blokken
 - [x] teken blokken
 - [X] blokken draaien
+- [x] blokken bewegen met toetsenbord
 - [ ] beweeg blokken met de tijd
 - [ ] voeg collision toe
 - [ ] check voor volledige lijnen
