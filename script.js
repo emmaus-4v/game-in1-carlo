@@ -167,6 +167,13 @@ function draw() {
         }
     }
 
+    // Functie doet iets elke seconden
+    if (frameCount % 50 == 0) {
+
+        // Beweegt het blok naar beneden
+        curBlockPos[0]++;
+    }
+
 
     // Verwijderd het huidige blokje uit het bord
     fill(0, 0, 0);
