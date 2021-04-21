@@ -60,11 +60,16 @@ function setup() {
     reset();
 }
 
+// CurBlockPos slaat belangerijke info op over de staat van de curBlock
+// CurBlockPos heeft 4 stukken info
+// 1: de y coordinaat
+// 2: de x coordinaat
+// 3: de soort tetromino
+// 4: de rotatie (1 - 4, waarvan 1 geen rotatie is, en 4 driekwart gedraad is)
 var newCurBlock = function () {
-    curBlockPos = [0, 0, 0, 0];
-    var randomTetrimino = Math.floor(Math.random() * 7);
-    curBlock = TetriminoVariaties[randomTetrimino]; // Pakt 1 van de 7 variaties random
-    curBlockPos[3] = randomTetrimino;
+    var randomTetrimino = Math.floor(Math.random() * 7); // Pakt een random tetrimino
+    curBlock = TetriminoVariaties[randomTetrimino];      // Zet de random tetrimino in curBlock
+    curBlockPos = [0, 0, randomTetrimino, 0]
 }
 
 
