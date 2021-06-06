@@ -28,6 +28,8 @@ const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt 
 ];
 
 var score = 0; // aantal behaalde punten
+var XRotationOffset;
+var YrotationOffset;
 var curBlock = Array.from(Array(4), () => new Array(4));
 var curBlockPos = new Array(6);
 var bord = Array.from(Array(16), () => new Array(10)); // 2D array - 16 hoog en 10 breed
@@ -60,14 +62,16 @@ function setup() {
     reset();
 }
 
-// CurBlockPos slaat belangerijke info op over de staat van de curBlock
-// CurBlockPos heeft 4 stukken info
-// 1: de y coordinaat van rechtboven
-// 2: de x coordinaat van rechtboven
-// 3: de rotatie (1 - 4, waarvan 1 geen rotatie is, en 4 driekwart gedraad is)
-// 4: de soort tetromino
-// 5: de y coordinaat van linksonder
-// 6: de x coordinaat van linksonder
+/*
+ * CurBlockPos slaat belangerijke info op over de staat van de curBlock
+ * CurBlockPos heeft 6 stukken info:
+ * 1: de y coordinaat van rechtboven
+ * 2: de x coordinaat van rechtboven
+ * 3: de rotatie (1 - 4, waarvan 1 geen rotatie is, en 4 driekwart gedraad is)
+ * 4: de soort tetromino
+ * 5: de y coordinaat van linksonder
+ * 6: de x coordinaat van linksonder
+*/
 var newCurBlock = function () {
 
     var randomTetrimino = Math.floor(Math.random() * 7); // Pakt een random tetrimino
@@ -95,7 +99,7 @@ var rotateBlock = function () {
 
         updateCurBlockPos2();
 
-        switch (curBlockPos[2]) {
+        /*switch (curBlockPos[2]) {
             // van 4 naar 1
             case 1:
                 curBlockPos[0]++;
@@ -111,9 +115,9 @@ var rotateBlock = function () {
                 break;
             // van 3 naar 4
             case 4:
-                //curBlockPos[0]--;
+                curBlockPos[0]--;
                 break;
-        }
+        }*/
 
     } else if (curBlockPos[3] === 0) {          // Straight Tetrimino
         TempCurBlock[0][0] = curBlock[0][0];
@@ -146,16 +150,16 @@ var updateCurBlockPos2 = function () {
     }
 }
 
-// Berekent met variabelen waar het meest linkse en onderste punt is van curBlock
+// Berekent met variabelen waar het meest rechtse en onderste punt is van curBlock
 // Deze functie gebruikt de curBlockPos variabele, dus hij hoeft niet parameters te hebben
-var calcLeftBottomPos = function () {
+var calcRightBottomPos = function () {
 
     // Straight
     if (curBlockPos[3] === 0) {
 
         //Kijkt naar de verschillende mogelijke rotaties
         switch (curBlockPos[2]) {
-            // Blok staat plat naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
+            // Blok staat evenwijdig naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
             case 1 || 3:
                 curBlockPos[4] = curBlockPos[0];
                 curBlockPos[5] = curBlockPos[1] + 3;
@@ -181,8 +185,8 @@ var calcLeftBottomPos = function () {
                  curBlockPos[5] = curBlockPos[1] + 1;
                  break;
              case 3:
-                 curBlockPos[4] = curBlockPos[0] + 2;
-                 curBlockPos[5] = curBlockPos[1] + 1;
+                 curBlockPos[4] = curBlockPos[0] + 1;
+                 curBlockPos[5] = curBlockPos[1] + 2;
                  break;
              case 4:
                  curBlockPos[4] = curBlockPos[0] + 2;
@@ -218,18 +222,21 @@ function keyPressed() {
         case 88:
             rotateBlock();
             break;
+
         // blok naar links bewegen
         case 37:
-            if (curBlockPos[1] > 0) {
+            if (curBlockPos[1] + XRotationOffset > 1) {
                 curBlockPos[1]--;
             }
             break;
+
         // blok naar rechts bewegen
         case 39:
-            if (curBlockPos[1] < 7) {
+            if (curBlockPos[1] + XRotationOffset < 8) {
                 curBlockPos[1]++;
             }
             break;
+
         // Blok naar beneden
         case 40:
             curBlockPos[0]++;
@@ -238,7 +245,7 @@ function keyPressed() {
 
 // Check of curBlock iets raakt
 var checkCollision = function () {
-    calcLeftBottomPos();
+    calcRightBottomPos();
 
     // als de curBlock de grond raakt
     if (curBlockPos[4] === 15) {
@@ -257,8 +264,30 @@ var checkCollision = function () {
     }
 }
 
- 
+
+var getBlockRotationOffset = function () {
+    switch (curBlockPos[3]) {
+        case 1:
+            XRotationOffset = 0;
+            break;
+        case 2:
+            XRotationOffset = -1;
+            break;
+        case 3:
+            XRotationOffset = 0;
+            break;
+        case 4:
+            XRotationOffset = 1;
+            break;
+    }
+}
+
+
 function draw() {
+
+    // Stuff to calc every frame
+    calcRightBottomPos();
+    getBlockRotationOffset();
 
     // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol
     for(var i = 0; i < curBlock.length; i++){
@@ -294,12 +323,12 @@ function draw() {
     if (frameCount % 50 == 0) {
 
         // Beweegt het blok naar beneden
-        curBlockPos[0]++;
+        //curBlockPos[0]++;
     }
 
 
 
-    calcLeftBottomPos();
+    
     checkCollision();
 
 
