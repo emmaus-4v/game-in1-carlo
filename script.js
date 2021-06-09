@@ -15,6 +15,8 @@
 const HOME = 0
 const SPELEN = 1;
 const GAMEOVER = 2;
+const mainColor = "green";
+const secondaryColor = "black";
 var spelStatus = SPELEN;
 
 const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt hebben
@@ -56,7 +58,8 @@ function setup() {
     createCanvas(1280, 720);
 
     // Kleur de achtergrond wit, zodat je het kunt zien
-    background('white');
+    background(secondaryColor);
+    stroke(mainColor);
 
     //Zet alle variabelen naar de beginstand
     reset();
@@ -65,12 +68,12 @@ function setup() {
 /*
  * CurBlockPos slaat belangerijke info op over de staat van de curBlock
  * CurBlockPos heeft 6 stukken info:
- * 1: de y coordinaat van rechtboven
- * 2: de x coordinaat van rechtboven
+ * 1: de y coordinaat van linksboven
+ * 2: de x coordinaat van linksboven
  * 3: de rotatie (1 - 4, waarvan 1 geen rotatie is, en 4 driekwart gedraad is)
  * 4: de soort tetromino
- * 5: de y coordinaat van linksonder
- * 6: de x coordinaat van linksonder
+ * 5: de y coordinaat van rechtsonder
+ * 6: de x coordinaat van rechtsonder
 */
 var newCurBlock = function () {
 
@@ -80,7 +83,6 @@ var newCurBlock = function () {
 
     curBlockPos = [1, 0, 1, randomTetrimino, 0, 0];
 }
-
 
 var rotateBlock = function () {
     var TempCurBlock = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
@@ -140,12 +142,22 @@ var calcRightBottomPos = function () {
         //Kijkt naar de verschillende mogelijke rotaties
         switch (curBlockPos[2]) {
             // Blok staat evenwijdig naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
-            case 1 || 3:
+            case 1:
                 curBlockPos[4] = curBlockPos[0];
                 curBlockPos[5] = curBlockPos[1] + 3;
                 break;
             // Blok staat loodrecht aan grond, x waarde heeft geen verschil, y waarde heeft 3 verschil
-            case 2 || 4:
+            case 2:
+                curBlockPos[4] = curBlockPos[0] + 3;
+                curBlockPos[5] = curBlockPos[1];
+                break;
+            // Blok staat evenwijdig naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
+            case 3:
+                curBlockPos[4] = curBlockPos[0];
+                curBlockPos[5] = curBlockPos[1] + 3;
+                break;
+            // Blok staat loodrecht aan grond, x waarde heeft geen verschil, y waarde heeft 3 verschil
+            case 4:
                 curBlockPos[4] = curBlockPos[0] + 3;
                 curBlockPos[5] = curBlockPos[1];
                 break;
@@ -229,21 +241,32 @@ var checkCollision = function () {
 
     // als de curBlock de grond raakt
     if (curBlockPos[4] === 15) {
+        placeBlock();
+    };
 
-        // Zet curBlock in het bord (Gepakt van de eerste for loop in de draw functie)
-        for (var i = 0; i < curBlock.length; i++) {
-            for (var j = 0; j < curBlock[i].length; j++) {
-                if (curBlock[i][j] === 1) {
-                    bord[curBlockPos[0] + i][curBlockPos[1] + j] = 1;
-                }
+    for(var i = 0; i < 4; i++){
+        if(bord[curBlockPos[4] + 1][curBlockPos[i]] == 1){
+            if(curBlock[curBlockPos[4]][i] == 1){
+                placeBlock();
+            };
+        };
+    };
+};
+
+var placeBlock = function() {
+    // Zet curBlock in het bord (Gepakt van de eerste for loop in de draw functie)
+
+    for (var i = 0; i < curBlock.length; i++) {
+        for (var j = 0; j < curBlock[i].length; j++) {
+            if (curBlock[i][j] === 1) {
+                bord[curBlockPos[0] + i][curBlockPos[1] + j] = 1;
             }
         }
-
-        // Pakt een nieuw blok
-        newCurBlock();
     }
-}
 
+    // Pakt een nieuw blok
+    newCurBlock();
+}
 
 var getBlockRotationOffset = function () {
     if(curBlockPos[3] === 0) { // Straight
@@ -311,10 +334,12 @@ function draw() {
     // Tekent het bord
     for (var i = 0; i < 16; i++) {      // bord is 16 hoog
         for (var j = 0; j < 10; j++) {  // bord is 10 breed
-            if (bord[i][j] != 0) { // Vraag niet waarom dit is de enige manier hoe ik dit heb kunnen laten werken
-                fill("black");
+            if (bord[i][j] === 1) {
+                stroke(secondaryColor);
+                fill(mainColor);
             } else {
-                fill("white");
+                stroke(mainColor);
+                fill(secondaryColor);
             }
             rect(j * 45, i * 45, 45, 45); // Tekent veld per blokje
         }
@@ -333,7 +358,7 @@ function draw() {
     if (frameCount % 50 == 0) {
 
         // Beweegt het blok naar beneden
-        //curBlockPos[0]++;
+        curBlockPos[0]++;
     }
 
 
@@ -346,7 +371,5 @@ function draw() {
     fill(0, 0, 0);
     //@ts-ignore
     fill(126, 18, 140);
-    text(curBlockPos[1] + " " + curBlockPos[0] + " " + curBlockPos[5] + " " + curBlockPos[4], 10, 710, 70, 80);
-
-
+    text(curBlockPos[1] + " " + curBlockPos[0] + " " + curBlockPos[5] + " " + curBlockPos[4] + " " + curBlock, 10, 710, 70, 80);
 }
