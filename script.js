@@ -246,23 +246,49 @@ var checkCollision = function () {
 
 
 var getBlockRotationOffset = function () {
-    switch (curBlockPos[2]) {
-        case 1:
-            rotationOffset1 = 0;
-            rotationOffset2 = 0;
-            break;
-        case 2:
-            rotationOffset1 = 1;
-            rotationOffset2 = 0;
-            break;
-        case 3:
-            rotationOffset1 = 0;
-            rotationOffset2 = 0;
-            break;
-        case 4:
-            rotationOffset1 = 0;
-            rotationOffset2 = 1;
-            break;
+    if(curBlockPos[3] === 0) { // Straight
+        switch (curBlockPos[2]) {
+            case 1:
+                rotationOffset1 = 0;
+                rotationOffset2 = -1;
+                break;
+            case 2:
+                rotationOffset1 = 0;
+                rotationOffset2 = 2;
+                break;
+            case 3:
+                rotationOffset1 = 0;
+                rotationOffset2 = -1;
+                break;
+            case 4:
+                rotationOffset1 = 0;
+                rotationOffset2 = 2;
+                break;
+        }
+
+    } else if(curBlockPos[3] === 1) { // Square
+        rotationOffset1 = 0;
+        rotationOffset2 = 1;
+
+    } else {
+        switch (curBlockPos[2]) {
+            case 1:
+                rotationOffset1 = 0;
+                rotationOffset2 = 0;
+                break;
+            case 2:
+                rotationOffset1 = 1;
+                rotationOffset2 = 0;
+                break;
+            case 3:
+                rotationOffset1 = 0;
+                rotationOffset2 = 0;
+                break;
+            case 4:
+                rotationOffset1 = 0;
+                rotationOffset2 = 1;
+                break;
+        }
     }
 }
 
@@ -313,7 +339,7 @@ function draw() {
 
 
     
-    //checkCollision();
+    checkCollision();
 
 
     // Verwijderd het huidige blokje uit het bord
