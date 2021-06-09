@@ -205,14 +205,14 @@ function keyPressed() {
 
         // blok naar links bewegen
         case 37:
-            if (curBlockPos[1] + rotationOffset1 + rotationOffset2 > 0) {
+            if (curBlockPos[1] + rotationOffset1 > 0) {
                 curBlockPos[1]--;
             }
             break;
 
         // blok naar rechts bewegen
         case 39:
-            if (curBlockPos[1] + rotationOffset1 + rotationOffset2 < 7) {
+            if (curBlockPos[1] - rotationOffset2 < 7) {
                 curBlockPos[1]++;
             }
             break;
@@ -252,7 +252,7 @@ var getBlockRotationOffset = function () {
             rotationOffset2 = 0;
             break;
         case 2:
-            rotationOffset1 = 0;
+            rotationOffset1 = 1;
             rotationOffset2 = 0;
             break;
         case 3:
@@ -261,7 +261,7 @@ var getBlockRotationOffset = function () {
             break;
         case 4:
             rotationOffset1 = 0;
-            rotationOffset2 = 0;
+            rotationOffset2 = 1;
             break;
     }
 }
