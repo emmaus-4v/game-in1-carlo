@@ -28,8 +28,8 @@ const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt 
 ];
 
 var score = 0; // aantal behaalde punten
-var XRotationOffset;
-var YrotationOffset;
+var rotationOffset1;
+var rotationOffset2;
 var curBlock = Array.from(Array(4), () => new Array(4));
 var curBlockPos = new Array(6);
 var bord = Array.from(Array(16), () => new Array(10)); // 2D array - 16 hoog en 10 breed
@@ -98,26 +98,6 @@ var rotateBlock = function () {
         TempCurBlock[1][1] = 1;
 
         updateCurBlockPos2();
-
-        /*switch (curBlockPos[2]) {
-            // van 4 naar 1
-            case 1:
-                curBlockPos[0]++;
-                break;
-            // van 1 naar 2
-            case 2:
-                curBlockPos[1]--;
-                break;
-            // van 2 naar 3
-            case 3:
-                curBlockPos[0]--;
-                curBlockPos[1]++;
-                break;
-            // van 3 naar 4
-            case 4:
-                curBlockPos[0]--;
-                break;
-        }*/
 
     } else if (curBlockPos[3] === 0) {          // Straight Tetrimino
         TempCurBlock[0][0] = curBlock[0][0];
@@ -225,14 +205,14 @@ function keyPressed() {
 
         // blok naar links bewegen
         case 37:
-            if (curBlockPos[1] + XRotationOffset > 1) {
+            if (curBlockPos[1] + rotationOffset1 + rotationOffset2 > 0) {
                 curBlockPos[1]--;
             }
             break;
 
         // blok naar rechts bewegen
         case 39:
-            if (curBlockPos[1] + XRotationOffset < 8) {
+            if (curBlockPos[1] + rotationOffset1 + rotationOffset2 < 7) {
                 curBlockPos[1]++;
             }
             break;
@@ -266,18 +246,22 @@ var checkCollision = function () {
 
 
 var getBlockRotationOffset = function () {
-    switch (curBlockPos[3]) {
+    switch (curBlockPos[2]) {
         case 1:
-            XRotationOffset = 0;
+            rotationOffset1 = 0;
+            rotationOffset2 = 0;
             break;
         case 2:
-            XRotationOffset = -1;
+            rotationOffset1 = 0;
+            rotationOffset2 = 0;
             break;
         case 3:
-            XRotationOffset = 0;
+            rotationOffset1 = 0;
+            rotationOffset2 = 0;
             break;
         case 4:
-            XRotationOffset = 1;
+            rotationOffset1 = 0;
+            rotationOffset2 = 0;
             break;
     }
 }
@@ -329,7 +313,7 @@ function draw() {
 
 
     
-    checkCollision();
+    //checkCollision();
 
 
     // Verwijderd het huidige blokje uit het bord
