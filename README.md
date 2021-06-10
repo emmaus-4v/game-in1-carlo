@@ -14,8 +14,8 @@ Basis: uitleg, spelen, afgaan en punten
 - [x] teken blokken
 - [X] blokken draaien
 - [x] blokken bewegen met toetsenbord
-- [ ] beweeg blokken met de tijd
-- [ ] voeg collision toe
+- [x] beweeg blokken met de tijd
+- [x] voeg collision toe
 - [ ] check voor volledige lijnen
 - [ ] voeg puntentelling toe
 - [ ] teken puntentelling

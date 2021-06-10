@@ -61,6 +61,8 @@ function setup() {
     background(secondaryColor);
     stroke(mainColor);
 
+    spelStatus = HOME;
+
     //Zet alle variabelen naar de beginstand
     reset();
 }
@@ -195,18 +197,6 @@ var calcRightBottomPos = function () {
 }
 
 
-/**
- * draw
- * de code in deze functie wordt meerdere keren per seconde
- * uitgevoerd door de p5 library, nadat de setup functie klaar is
- */
-/*function draw() {
-  switch (spelStatus) {
-      case SPELEN:
-          
-      break;
-  }
-}*/
 
 function keyPressed() {
     switch (keyCode) {
@@ -239,6 +229,10 @@ function keyPressed() {
                 curBlockPos[0]++;
                 checkCollision();
             }
+        // Press enter to play stuff
+        case 13:
+            spelStatus = SPELEN;
+            break;
     }
 }
 
@@ -322,61 +316,76 @@ var getBlockRotationOffset = function () {
     }
 }
 
-
+/**
+ * draw
+ * de code in deze functie wordt meerdere keren per seconde
+ * uitgevoerd door de p5 library, nadat de setup functie klaar is
+ */
 function draw() {
+    switch (spelStatus) {
+        case HOME:
+            // Home menu tekenen
 
-    // Stuff to calc every frame
-    calcRightBottomPos();
-    getBlockRotationOffset();
+            textSize(40);
+            fill(mainColor);
+            text("TETRIS", 550, 240, 426, 240);
+            text("Press enter to play :)", 426, 360, 426, 240);
 
-    // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol
-    for(var i = 0; i < curBlock.length; i++){
-        for(var j = 0; j < curBlock[i].length; j++){
-            if (curBlock[i][j] === 1) {
-                bord[curBlockPos[0]+i][curBlockPos[1] + j] = 1;
+            //if(true){
+            //    spelStatus = SPELEN;
+            //}
+            break;
+
+        case SPELEN:
+            // Stuff to calc every frame
+            calcRightBottomPos();
+            getBlockRotationOffset();
+
+            // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol
+            for(var i = 0; i < curBlock.length; i++){
+                for(var j = 0; j < curBlock[i].length; j++){
+                    if (curBlock[i][j] === 1) {
+                        bord[curBlockPos[0]+i][curBlockPos[1] + j] = 1;
+                    }
+                }
             }
-        }
-    }
-    
-    // Tekent het bord
-    for (var i = 0; i < 16; i++) {      // bord is 16 hoog
-        for (var j = 0; j < 10; j++) {  // bord is 10 breed
-            if (bord[i][j] === 1) {
-                stroke(secondaryColor);
-                fill(mainColor);
-            } else {
-                stroke(mainColor);
-                fill(secondaryColor);
+
+            // Tekent het bord
+            for (var i = 0; i < 16; i++) {      // bord is 16 hoog
+                for (var j = 0; j < 10; j++) {  // bord is 10 breed
+                    if (bord[i][j] === 1) {
+                        stroke(secondaryColor);
+                        fill(mainColor);
+                    } else {
+                        stroke(mainColor);
+                        fill(secondaryColor);
+                    }
+                    rect(j * 45 + 426, i * 45, 45, 45); // Tekent veld per blokje
+                }
             }
-            rect(j * 45, i * 45, 45, 45); // Tekent veld per blokje
-        }
-    }
 
-    // Precies hetzelfde als voor de draw, maar dan zet ie hem naar 0, zodat hij niet het bord opneemt wanneer het blokje op een andere positie is
-    for(var i = 0; i < curBlock.length; i++){
-        for(var j = 0; j < curBlock[i].length; j++){
-            if (curBlock[i][j] === 1) {
-                bord[curBlockPos[0]+i][curBlockPos[1] + j] = 0;
+            // Precies hetzelfde als voor de draw, maar dan zet ie hem naar 0, zodat hij niet het bord opneemt wanneer het blokje op een andere positie is
+            for(var i = 0; i < curBlock.length; i++){
+               for(var j = 0; j < curBlock[i].length; j++){
+                    if (curBlock[i][j] === 1) {
+                       bord[curBlockPos[0]+i][curBlockPos[1] + j] = 0;
+                    }
+               }
             }
-        }
+
+            // Functie doet iets elke seconden
+            if (frameCount % 50 == 0) {
+
+                // Beweegt het blok naar beneden
+                curBlockPos[0]++;
+            }
+            checkCollision();
+
+            // Verwijderd het huidige blokje uit het bord
+            fill(0, 0, 0);
+            //@ts-ignore
+            fill(126, 18, 140);
+            text(curBlockPos[1] + " " + curBlockPos[0] + " " + curBlockPos[5] + " " + curBlockPos[4] + " " + curBlock, 10, 710, 70, 80);
+            break;
     }
-
-    // Functie doet iets elke seconden
-    if (frameCount % 50 == 0) {
-
-        // Beweegt het blok naar beneden
-        curBlockPos[0]++;
-    }
-
-
-
-    
-    checkCollision();
-
-
-    // Verwijderd het huidige blokje uit het bord
-    fill(0, 0, 0);
-    //@ts-ignore
-    fill(126, 18, 140);
-    text(curBlockPos[1] + " " + curBlockPos[0] + " " + curBlockPos[5] + " " + curBlockPos[4] + " " + curBlock, 10, 710, 70, 80);
 }
