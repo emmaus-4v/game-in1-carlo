@@ -245,8 +245,8 @@ var checkCollision = function () {
     };
 
     for(var i = 0; i < 4; i++){
-        if(bord[curBlockPos[4] + 1][curBlockPos[i]] == 1){
-            if(curBlock[curBlockPos[4]][i] == 1){
+        if(     bord        [curBlockPos[4] + 1]                [i + curBlockPos[1]]    === 1){
+            if( curBlock    [curBlockPos[4] - curBlockPos[0]]   [i]                     === 1){
                 placeBlock();
             };
         };
