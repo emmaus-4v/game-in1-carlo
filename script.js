@@ -81,7 +81,7 @@ var newCurBlock = function () {
 
     curBlock = TetriminoVariaties[randomTetrimino];      // Zet de random tetrimino in curBlock
 
-    curBlockPos = [1, 0, 1, randomTetrimino, 0, 0];
+    curBlockPos = [0, 4, 1, randomTetrimino, 0, 0];
 }
 
 var rotateBlock = function () {
@@ -232,6 +232,13 @@ function keyPressed() {
         // Blok naar beneden
         case 40:
             curBlockPos[0]++;
+            break;
+        // Hard drop (pijltje naar boven)
+        case 38:
+            while(curBlockPos[0] != 0){
+                curBlockPos[0]++;
+                checkCollision();
+            }
     }
 }
 
