@@ -15,8 +15,8 @@
 const HOME = 0
 const SPELEN = 1;
 const GAMEOVER = 2;
-const mainColor = "green";
-const secondaryColor = "black";
+var mainColor = "green";
+var secondaryColor = "black";
 var spelStatus = SPELEN;
 
 const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt hebben
@@ -196,8 +196,6 @@ var calcRightBottomPos = function () {
     }
 }
 
-
-
 function keyPressed() {
     switch (keyCode) {
         // blokkenrotatie, keycode 88 staat voor x
@@ -245,16 +243,41 @@ var checkCollision = function () {
         placeBlock();
     };
 
-    for(var i = 0; i < 4; i++){
-        if(     bord        [curBlockPos[4] + 1]                [i + curBlockPos[1]]    === 1){
-            if( curBlock    [curBlockPos[4] - curBlockPos[0]]   [i]                     === 1){
+    // als de curBlock een ander blok raakt
+    for (var i = 0; i < 4; i++){
+        if(bord[curBlockPos[4] + 1][i + curBlockPos[1]] === 1 && curBlock[curBlockPos[4] - curBlockPos[0]][i] === 1){
                 placeBlock();
-            };
+                break;
         };
     };
+
+
+    // LINECHECK
+    // Checks vibe of lines
+    for(var i = 0; i < 16; i++) {
+        if(bord[i].toString() == "1,1,1,1,1,1,1,1,1,1"){ // Geen idee wrm maar js wilt dat je eerst de array naar een string maakt lol idk
+
+            // Haalt de volledige rij weg
+            bord[i] = [0,0,0,0,0,0,0,0,0,0];
+
+            // Zet alle rijen erboven goed
+            for(var x = 0; x < i; x++){
+                bord[i - x] = bord[i - x - 1] 
+            }
+            bord[0] = [0,0,0,0,0,0,0,0,0,0];
+
+            // Veranderd de kleuren lmao
+            // @ts-ignore
+            mainColor = color(random(0, 255), random(0, 255), random(0, 255));
+            // @ts-ignore
+            secondaryColor = color(random(0, 255) - 200, random(0, 255) - 200, random(0, 255) - 200); 
+            break;
+        }
+    }
 };
 
 var placeBlock = function() {
+    
     // Zet curBlock in het bord (Gepakt van de eerste for loop in de draw functie)
 
     for (var i = 0; i < curBlock.length; i++) {
@@ -385,7 +408,7 @@ function draw() {
             fill(0, 0, 0);
             //@ts-ignore
             fill(126, 18, 140);
-            text(curBlockPos[1] + " " + curBlockPos[0] + " " + curBlockPos[5] + " " + curBlockPos[4] + " " + curBlock, 10, 710, 70, 80);
+            text(bord[14] + "", 10, 710, 1000, 80);
             break;
     }
 }
