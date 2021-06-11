@@ -223,9 +223,11 @@ function keyPressed() {
             break;
         // Hard drop (pijltje naar boven)
         case 38:
-            while(curBlockPos[0] != 0){
-                curBlockPos[0]++;
-                checkCollision();
+            if(spelStatus == SPELEN){
+                while(curBlockPos[0] != 0){
+                    curBlockPos[0]++;
+                    checkCollision();
+                }
             }
         // Press enter to play stuff
         case 13:
@@ -266,6 +268,8 @@ var checkCollision = function () {
             }
             bord[0] = [0,0,0,0,0,0,0,0,0,0];
 
+            score++;
+
             // Veranderd de kleuren lmao
             // @ts-ignore
             mainColor = color(random(0, 255), random(0, 255), random(0, 255));
@@ -286,6 +290,13 @@ var placeBlock = function() {
                 bord[curBlockPos[0] + i][curBlockPos[1] + j] = 1;
             }
         }
+    }
+
+    // Checkt of je verloren hebt
+    for(var i = 0; i < 4; i++){
+        if(bord[0 || 1][3 + i] === 1) {
+            spelStatus = GAMEOVER;
+        } 
     }
 
     // Pakt een nieuw blok
@@ -345,6 +356,8 @@ var getBlockRotationOffset = function () {
  * uitgevoerd door de p5 library, nadat de setup functie klaar is
  */
 function draw() {
+    fill(secondaryColor)
+    rect(0, 0, 1280, 720)
     switch (spelStatus) {
         case HOME:
             // Home menu tekenen
@@ -353,17 +366,9 @@ function draw() {
             fill(mainColor);
             text("TETRIS", 550, 240, 426, 240);
             text("Press enter to play :)", 426, 360, 426, 240);
-
-            //if(true){
-            //    spelStatus = SPELEN;
-            //}
             break;
 
         case SPELEN:
-            // Stuff to calc every frame
-            calcRightBottomPos();
-            getBlockRotationOffset();
-
             // Zet het huidige blokje in het bord, het werkt vgm best goed ik heb geen idee meer hoe lol
             for(var i = 0; i < curBlock.length; i++){
                 for(var j = 0; j < curBlock[i].length; j++){
@@ -396,19 +401,48 @@ function draw() {
                }
             }
 
-            // Functie doet iets elke seconden
+            // Functie doet iets aan het begin van elke seconden
             if (frameCount % 50 == 0) {
 
                 // Beweegt het blok naar beneden
                 curBlockPos[0]++;
             }
-            checkCollision();
+            // Functie doet iets aan het einde van elke seconden
+            if (frameCount % 50 == 49) {
 
-            // Verwijderd het huidige blokje uit het bord
-            fill(0, 0, 0);
-            //@ts-ignore
-            fill(126, 18, 140);
-            text(bord[14] + "", 10, 710, 1000, 80);
+                // Beweegt het blok naar beneden
+                checkCollision();
+                calcRightBottomPos();
+                getBlockRotationOffset();
+            }
+            stroke(secondaryColor);
+            fill(secondaryColor);
+            rect(100, 100, 200, 100);
+            stroke(secondaryColor);
+            fill(mainColor);
+            textSize(50);
+            text("Score: " + score, 100, 100, 1000, 100);
             break;
+
+        case GAMEOVER: {
+            // Tekent het bord
+            for (var i = 0; i < 16; i++) {      // bord is 16 hoog
+                for (var j = 0; j < 10; j++) {  // bord is 10 breed
+                    if (bord[i][j] === 1) {
+                        stroke(secondaryColor);
+                        fill(mainColor);
+                    } else {
+                        stroke(mainColor);
+                        fill(secondaryColor);
+                    }
+                    rect(j * 45 + 426, i * 45, 45, 45); // Tekent veld per blokje
+                }
+            }
+            textSize(100);
+            fill(mainColor);
+            text("GAME OVER", 500, 240, 1000, 1000)
+            fill(secondaryColor);
+            break;
+        }   
     }
 }
