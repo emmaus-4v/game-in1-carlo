@@ -223,14 +223,14 @@ function keyPressed() {
             break;
         // Hard drop (pijltje naar boven)
         case 38:
-            if(spelStatus == SPELEN){
-                while(curBlockPos[0] != 0){
-                    curBlockPos[0]++;
-                    checkCollision();
-                }
-            }
+            do {
+                curBlockPos[0]++;
+                checkCollision();
+            } while(curBlockPos[0] != 0)
+            break;
         // Press enter to play stuff
         case 13:
+            reset();
             spelStatus = SPELEN;
             break;
     }
@@ -438,9 +438,18 @@ function draw() {
                     rect(j * 45 + 426, i * 45, 45, 45); // Tekent veld per blokje
                 }
             }
+
+            // Tekent de overlay
+            fill(secondaryColor);
+            rect(320, 130, 640, 360)
             textSize(100);
             fill(mainColor);
-            text("GAME OVER", 500, 240, 1000, 1000)
+            stroke(secondaryColor);
+            text("GAME OVER", 340, 160, 1000, 1000);
+            textSize(50);
+            text("Score: " + score, 550, 300, 1000, 1000);
+            text("Press enter to restart", 410, 390, 1000, 1000)
+            stroke(mainColor);
             fill(secondaryColor);
             break;
         }   
