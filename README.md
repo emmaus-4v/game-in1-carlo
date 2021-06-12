@@ -17,9 +17,8 @@ Basis: uitleg, spelen, afgaan en punten
 - [x] beweeg blokken met de tijd
 - [x] voeg collision toe
 - [x] check voor volledige lijnen
-- [ ] voeg puntentelling toe
-- [ ] teken puntentelling
-- [ ] versnel het spel met hoeveelheid punten
+- [X] voeg puntentelling toe
+- [X] teken puntentelling
 
 Uitbreiding: *bedenk iets, bijvoorbeeld meer tegenstanders*
 - [ ] *later uitwerken*
