@@ -15,24 +15,25 @@
 const HOME = 0
 const SPELEN = 1;
 const GAMEOVER = 2;
-var mainColor = "green";
-var secondaryColor = "black";
+var kleur1 = "green";
+var kleur2 = "black";
 var spelStatus = SPELEN;
 
 // aantal behaalde punten
 var score = 0;
-var rotationOffset1;
-var rotationOffset2;
 
-/* curBlock is een twee-dimentionale array van 4 breed en 4 hoog
+var rotatieCompensatie1;
+var rotatieCompensatie2;
+
+/* huidigBlok is een twee-dimentionale array van 4 breed en 4 hoog
  * - Deze array houd de huidige blok, wat gebruikt en veranderd kan worden waar nodig
- * - De functie newCurBlock geeft een voorgegeven preset aan curBlock
- * - Metadata van curBlock (positie, rotatie, etc) word gehouden in de variabele CurBlockPos
+ * - De functie newhuidigBlok geeft een voorgegeven preset aan huidigBlok
+ * - Metadata van huidigBlok (positie, rotatie, etc) word gehouden in de variabele huidigBlokPos
  */
-var curBlock = Array.from(Array(4), () => new Array(4));
+var huidigBlok = Array.from(Array(4), () => new Array(4));
 
-/* curBlockPos slaat belangerijke info op over de staat van de curBlock
- * - curBlockPos heeft 6 stukken info:
+/* huidigBlokPos slaat belangerijke info op over de staat van de huidigBlok
+ * - huidigBlokPos heeft 6 stukken info:
  * - 1: de y coordinaat van linksboven
  * - 2: de x coordinaat van linksboven
  * - 3: de rotatie (1 - 4, waarvan 1 geen rotatie is, en 4 driekwart gedraad is)
@@ -40,7 +41,7 @@ var curBlock = Array.from(Array(4), () => new Array(4));
  * - 5: de y coordinaat van rechtsonder
  * - 6: de x coordinaat van rechtsonder
  */
-var curBlockPos = new Array(6);
+var huidigBlokPos = new Array(6);
 
 /* bord is een 16x10 twee-dimentionale array
  * - bord houd het bord vast, wat gebruikt word om te tekenen en om collision op te checken
@@ -70,8 +71,8 @@ function setup() {
     createCanvas(1280, 720);
 
     // Kleur de achtergrond wit, zodat je het kunt zien
-    background(secondaryColor);
-    stroke(mainColor);
+    background(kleur2);
+    stroke(kleur1);
 
     spelStatus = HOME;
 
@@ -89,176 +90,176 @@ var reset = function () {
     }
 
     // Pakt een nieuw blok
-    newCurBlock();
+    newhuidigBlok();
 }
 
-// Pakt een nieuw curBlock
-var newCurBlock = function () {
+// Pakt een nieuw huidigBlok
+var newhuidigBlok = function () {
 
     // Pakt een random waarde van 1 tot 7
     // De const TetriminoVariaties (lijn 29) heeft 7 verschillende arrays voor blokken
     // Deze var neemt dus 1 van de 7 blokken
     var randomTetrimino = Math.floor(Math.random() * 7); 
 
-    // Zet de net gepakte tetrimino in de curBlock
-    curBlock = TetriminoVariaties[randomTetrimino];
+    // Zet de net gepakte tetrimino in de huidigBlok
+    huidigBlok = TetriminoVariaties[randomTetrimino];
 
-    // Reset de CurBlockPos Variabele naar de beginstand
+    // Reset de huidigBlokPos Variabele naar de beginstand
     // Zie lijn 72 voor de 
-    curBlockPos = [0, 4, 1, randomTetrimino, 0, 0];
+    huidigBlokPos = [0, 4, 1, randomTetrimino, 0, 0];
 }
 
 /*
- * Alle functies die curBlock veranderen
+ * Alle functies die huidigBlok veranderen
  */
 
 // Draait het blok
-var rotateBlock = function () {
-    // Tijdelijke variabele om curBlock mee op te slaan
-    // Aan het einde van de functie word curBlock overschreven door deze var
-    var TempCurBlock = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+var draaiBlok = function () {
+    // Tijdelijke variabele om huidigBlok mee op te slaan
+    // Aan het einde van de functie word huidigBlok overschreven door deze var
+    var TemphuidigBlok = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
     // Gaat na welk soort tetromino het is en draait het blok
     // Ik weet dat dit inefficient is
     // Normale blokken (T, J, L, S, Z)
-    if(curBlockPos[3] > 1) {                    
-        TempCurBlock[0][2] = curBlock[0][0];
-        TempCurBlock[2][2] = curBlock[0][2];
-        TempCurBlock[2][0] = curBlock[2][2];
-        TempCurBlock[0][0] = curBlock[2][0];
+    if(huidigBlokPos[3] > 1) {                    
+        TemphuidigBlok[0][2] = huidigBlok[0][0];
+        TemphuidigBlok[2][2] = huidigBlok[0][2];
+        TemphuidigBlok[2][0] = huidigBlok[2][2];
+        TemphuidigBlok[0][0] = huidigBlok[2][0];
 
-        TempCurBlock[1][2] = curBlock[0][1];
-        TempCurBlock[2][1] = curBlock[1][2];
-        TempCurBlock[1][0] = curBlock[2][1];
-        TempCurBlock[0][1] = curBlock[1][0];
-        TempCurBlock[1][1] = 1;
+        TemphuidigBlok[1][2] = huidigBlok[0][1];
+        TemphuidigBlok[2][1] = huidigBlok[1][2];
+        TemphuidigBlok[1][0] = huidigBlok[2][1];
+        TemphuidigBlok[0][1] = huidigBlok[1][0];
+        TemphuidigBlok[1][1] = 1;
 
 
     } 
     // Straight Tetrimino
-    else if (curBlockPos[3] === 0) {          
-        TempCurBlock[0][0] = curBlock[0][0];
-        TempCurBlock[1][0] = curBlock[0][1];
-        TempCurBlock[2][0] = curBlock[0][2];
-        TempCurBlock[3][0] = curBlock[0][3];
+    else if (huidigBlokPos[3] === 0) {          
+        TemphuidigBlok[0][0] = huidigBlok[0][0];
+        TemphuidigBlok[1][0] = huidigBlok[0][1];
+        TemphuidigBlok[2][0] = huidigBlok[0][2];
+        TemphuidigBlok[3][0] = huidigBlok[0][3];
 
-        TempCurBlock[0][0] = curBlock[0][0];
-        TempCurBlock[0][1] = curBlock[1][0];
-        TempCurBlock[0][2] = curBlock[2][0];
-        TempCurBlock[0][3] = curBlock[3][0];
+        TemphuidigBlok[0][0] = huidigBlok[0][0];
+        TemphuidigBlok[0][1] = huidigBlok[1][0];
+        TemphuidigBlok[0][2] = huidigBlok[2][0];
+        TemphuidigBlok[0][3] = huidigBlok[3][0];
 
 
     }
     // Square Tetrimino 
     else {                                    
-        TempCurBlock = [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+        TemphuidigBlok = [[1, 1, 0, 0], [1, 1, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
     }
 
-    // Hier word de curBlock overschreven door TempCurBlock
-    curBlock = TempCurBlock;
+    // Hier word de huidigBlok overschreven door TemphuidigBlok
+    huidigBlok = TemphuidigBlok;
 
-    // Update de rotatievariabele in curBlockPos
-    if (curBlockPos[2] === 4) {
-        curBlockPos[2] = 1;
+    // Update de rotatievariabele in huidigBlokPos
+    if (huidigBlokPos[2] === 4) {
+        huidigBlokPos[2] = 1;
     } else {
-        curBlockPos[2]++;
+        huidigBlokPos[2]++;
     }
 }
 
 // Zet het blok vast in het bord
-var placeBlock = function() {
+var plaatsBlok = function() {
     
-    // Zet curBlock in het bord (Gepakt van de eerste for loop in de draw functie)
-    for (var i = 0; i < curBlock.length; i++) {
-        for (var j = 0; j < curBlock[i].length; j++) {
-            if (curBlock[i][j] === 1) {
-                bord[curBlockPos[0] + i][curBlockPos[1] + j] = 1;
+    // Zet huidigBlok in het bord (Gepakt van de eerste for loop in de draw functie)
+    for (var i = 0; i < huidigBlok.length; i++) {
+        for (var j = 0; j < huidigBlok[i].length; j++) {
+            if (huidigBlok[i][j] === 1) {
+                bord[huidigBlokPos[0] + i][huidigBlokPos[1] + j] = 1;
             }
         }
     }
 
     // Pakt een nieuw blok
-    newCurBlock();
+    newhuidigBlok();
 }
 
 /* 
  * Alle functies die dingen berekenen
  */
 
-// Berekent met variabelen waar het meest rechtse en onderste punt is van curBlock
-var calcRightBottomPos = function () {
+// Berekent met variabelen waar het meest rechtse en onderste punt is van huidigBlok
+var berekenRechtsOnderPos = function () {
 
     // Straight
-    if (curBlockPos[3] === 0) {
+    if (huidigBlokPos[3] === 0) {
 
         //Kijkt naar de verschillende mogelijke rotaties
-        switch (curBlockPos[2]) {
+        switch (huidigBlokPos[2]) {
             // Blok staat evenwijdig naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
             case 1:
-                curBlockPos[4] = curBlockPos[0];
-                curBlockPos[5] = curBlockPos[1] + 3;
+                huidigBlokPos[4] = huidigBlokPos[0];
+                huidigBlokPos[5] = huidigBlokPos[1] + 3;
                 break;
             // Blok staat loodrecht aan grond, x waarde heeft geen verschil, y waarde heeft 3 verschil
             case 2:
-                curBlockPos[4] = curBlockPos[0] + 3;
-                curBlockPos[5] = curBlockPos[1];
+                huidigBlokPos[4] = huidigBlokPos[0] + 3;
+                huidigBlokPos[5] = huidigBlokPos[1];
                 break;
             // Blok staat evenwijdig naar de grond, x waarde heeft 3 verschil, y waarde heeft geen verschil
             case 3:
-                curBlockPos[4] = curBlockPos[0];
-                curBlockPos[5] = curBlockPos[1] + 3;
+                huidigBlokPos[4] = huidigBlokPos[0];
+                huidigBlokPos[5] = huidigBlokPos[1] + 3;
                 break;
             // Blok staat loodrecht aan grond, x waarde heeft geen verschil, y waarde heeft 3 verschil
             case 4:
-                curBlockPos[4] = curBlockPos[0] + 3;
-                curBlockPos[5] = curBlockPos[1];
+                huidigBlokPos[4] = huidigBlokPos[0] + 3;
+                huidigBlokPos[5] = huidigBlokPos[1];
                 break;
         }
     }
 
 
     // Alle blokken met een 3x3 grid (2 - 7)
-    else if (curBlockPos[3] != 0 || 1) {
-         switch (curBlockPos[2]) {
+    else if (huidigBlokPos[3] != 0 || 1) {
+         switch (huidigBlokPos[2]) {
              case 1:
-                 curBlockPos[4] = curBlockPos[0] + 1;
-                 curBlockPos[5] = curBlockPos[1] + 2;
+                 huidigBlokPos[4] = huidigBlokPos[0] + 1;
+                 huidigBlokPos[5] = huidigBlokPos[1] + 2;
                  break;
              case 2:
-                 curBlockPos[4] = curBlockPos[0] + 2;
-                 curBlockPos[5] = curBlockPos[1] + 1;
+                 huidigBlokPos[4] = huidigBlokPos[0] + 2;
+                 huidigBlokPos[5] = huidigBlokPos[1] + 1;
                  break;
              case 3:
-                 curBlockPos[4] = curBlockPos[0] + 1;
-                 curBlockPos[5] = curBlockPos[1] + 2;
+                 huidigBlokPos[4] = huidigBlokPos[0] + 1;
+                 huidigBlokPos[5] = huidigBlokPos[1] + 2;
                  break;
              case 4:
-                 curBlockPos[4] = curBlockPos[0] + 2;
-                 curBlockPos[5] = curBlockPos[1] + 1;
+                 huidigBlokPos[4] = huidigBlokPos[0] + 2;
+                 huidigBlokPos[5] = huidigBlokPos[1] + 1;
                  break;
          }
     }
 
     // Square, blijft altijd hetzelfde
     else {
-        curBlockPos[4] = curBlockPos[0] + 1;
-        curBlockPos[5] = curBlockPos[1] + 1;
+        huidigBlokPos[4] = huidigBlokPos[0] + 1;
+        huidigBlokPos[5] = huidigBlokPos[1] + 1;
     }
 }
 
-// Check of curBlock iets raakt
-var checkCollision = function () {
-    calcRightBottomPos();
+// Check of huidigBlok iets raakt
+var checkBotsing = function () {
+    berekenRechtsOnderPos();
 
-    // als de curBlock de grond raakt
-    if (curBlockPos[4] === 15) {
-        placeBlock();
+    // als de huidigBlok de grond raakt
+    if (huidigBlokPos[4] === 15) {
+        plaatsBlok();
     };
 
-    // als de curBlock een ander blok raakt
+    // als de huidigBlok een ander blok raakt
     for (var i = 0; i < 4; i++){
-        if(bord[curBlockPos[4] + 1][i + curBlockPos[1]] === 1 && curBlock[curBlockPos[4] - curBlockPos[0]][i] === 1){
-                placeBlock();
+        if(bord[huidigBlokPos[4] + 1][i + huidigBlokPos[1]] === 1 && huidigBlok[huidigBlokPos[4] - huidigBlokPos[0]][i] === 1){
+                plaatsBlok();
                 break;
         };
     };
@@ -284,9 +285,9 @@ var checkCollision = function () {
 
             // Veranderd de kleuren
             // @ts-ignore
-            mainColor = color(random(0, 255), random(0, 255), random(0, 255));
+            kleur1 = color(random(0, 255), random(0, 255), random(0, 255));
             // @ts-ignore
-            secondaryColor = color(random(0, 255) - 200, random(0, 255) - 200, random(0, 255) - 200); 
+            kleur2 = color(random(0, 255) - 200, random(0, 255) - 200, random(0, 255) - 200); 
             break;
         }
     }
@@ -299,51 +300,51 @@ var checkCollision = function () {
     }
 };
 
-// Kijkt hoeveel de curBlock afwijkt van de 4x4 grid 
+// Kijkt hoeveel de huidigBlok afwijkt van de 4x4 grid 
 // Is nodig om gedraaide blokken bij de randen te kunnen krijgen
 // Omdat blokken draaien vanaf het middelpunt gebeurt, kan het zijn dat de meest linker kant van het blok verder rechts is dan de 4x4 grid van de array
-var getBlockRotationOffset = function () {
-    if(curBlockPos[3] === 0) { // Straight
-        switch (curBlockPos[2]) {
+var berekenRotatieCompensatie = function () {
+    if(huidigBlokPos[3] === 0) { // Straight
+        switch (huidigBlokPos[2]) {
             case 1:
-                rotationOffset1 = 0;
-                rotationOffset2 = -1;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = -1;
                 break;
             case 2:
-                rotationOffset1 = 0;
-                rotationOffset2 = 2;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = 2;
                 break;
             case 3:
-                rotationOffset1 = 0;
-                rotationOffset2 = -1;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = -1;
                 break;
             case 4:
-                rotationOffset1 = 0;
-                rotationOffset2 = 2;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = 2;
                 break;
         }
 
-    } else if(curBlockPos[3] === 1) { // Square
-        rotationOffset1 = 0;
-        rotationOffset2 = 1;
+    } else if(huidigBlokPos[3] === 1) { // Square
+        rotatieCompensatie1 = 0;
+        rotatieCompensatie2 = 1;
 
     } else {
-        switch (curBlockPos[2]) {
+        switch (huidigBlokPos[2]) {
             case 1:
-                rotationOffset1 = 0;
-                rotationOffset2 = 0;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = 0;
                 break;
             case 2:
-                rotationOffset1 = 1;
-                rotationOffset2 = 0;
+                rotatieCompensatie1 = 1;
+                rotatieCompensatie2 = 0;
                 break;
             case 3:
-                rotationOffset1 = 0;
-                rotationOffset2 = 0;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = 0;
                 break;
             case 4:
-                rotationOffset1 = 0;
-                rotationOffset2 = 1;
+                rotatieCompensatie1 = 0;
+                rotatieCompensatie2 = 1;
                 break;
         }
     }
@@ -358,41 +359,41 @@ function keyPressed() {
     switch (keyCode) {
         // blokkenrotatie, keycode 88 staat voor x
         case 88:
-            rotateBlock();
+            draaiBlok();
             break;
 
         // blok naar links bewegen
         case 37:
-            if (curBlockPos[1] + rotationOffset1 > 0) {
-                curBlockPos[1]--;
+            if (huidigBlokPos[1] + rotatieCompensatie1 > 0) {
+                huidigBlokPos[1]--;
             }
             break;
 
         // blok naar rechts bewegen
         case 39:
-            if (curBlockPos[1] - rotationOffset2 < 7) {
-                curBlockPos[1]++;
+            if (huidigBlokPos[1] - rotatieCompensatie2 < 7) {
+                huidigBlokPos[1]++;
             }
             break;
 
         // Blok naar beneden
         case 40:
-            curBlockPos[0]++;
-            checkCollision();
+            huidigBlokPos[0]++;
+            checkBotsing();
             break;
         // Hard drop (pijltje naar boven)
         case 38:
             do {
-                curBlockPos[0]++;
-                checkCollision();
-            } while(curBlockPos[0] != 0)
+                huidigBlokPos[0]++;
+                checkBotsing();
+            } while(huidigBlokPos[0] != 0)
             break;
         // Hard drop (space)
         case 32:
             do {
-                curBlockPos[0]++;
-                checkCollision();
-            } while(curBlockPos[0] != 0)
+                huidigBlokPos[0]++;
+                checkBotsing();
+            } while(huidigBlokPos[0] != 0)
             break;
         // Press enter to play stuff
         case 13:
@@ -409,26 +410,26 @@ function keyPressed() {
  */
 function draw() {
     // Tekent de achtergrond
-    fill(secondaryColor)
+    fill(kleur2)
     rect(0, 0, 1280, 720)
     switch (spelStatus) {
         case HOME:
             // Home menu tekenen
 
             textSize(40);
-            fill(mainColor);
+            fill(kleur1);
             text("TETRIS", 550, 240, 426, 240);
-            text("Press enter to play :)", 426, 360, 426, 240);
+            text("Druk op enter om te spelen :)", 426, 360, 426, 240);
             break;
 
         case SPELEN:
             // Zet het huidige blokje in het bord (niet permanent, wordt na het tekenen van het bord er weer uit gehaald)
-            // Loopt door de hele curBlock array
-            for(var i = 0; i < curBlock.length; i++){
-                for(var j = 0; j < curBlock[i].length; j++){
+            // Loopt door de hele huidigBlok array
+            for(var i = 0; i < huidigBlok.length; i++){
+                for(var j = 0; j < huidigBlok[i].length; j++){
                     // Als een nummer 1 is, zet hij die ook in het bord
-                    if (curBlock[i][j] === 1) {
-                        bord[curBlockPos[0]+i][curBlockPos[1] + j] = 1;
+                    if (huidigBlok[i][j] === 1) {
+                        bord[huidigBlokPos[0]+i][huidigBlokPos[1] + j] = 1;
                     }
                 }
             }
@@ -440,11 +441,11 @@ function draw() {
                     // Als een nummer 1 is, zet hij de kleuren naar vol
                     // als het nummer 0 is, zet hij de kleuren naar leeg
                     if (bord[i][j] === 1) {
-                        stroke(secondaryColor);
-                        fill(mainColor);
+                        stroke(kleur2);
+                        fill(kleur1);
                     } else {
-                        stroke(mainColor);
-                        fill(secondaryColor);
+                        stroke(kleur1);
+                        fill(kleur2);
                     }
                     // Tekent veld per blokje
                     rect(j * 45 + 426, i * 45, 45, 45);
@@ -452,10 +453,10 @@ function draw() {
             }
 
             // Precies hetzelfde als voor de draw, maar dan zet hij het naar 0, zodat hij niet het bord opneemt wanneer het blokje op een andere positie is
-            for(var i = 0; i < curBlock.length; i++){
-               for(var j = 0; j < curBlock[i].length; j++){
-                    if (curBlock[i][j] === 1) {
-                       bord[curBlockPos[0]+i][curBlockPos[1] + j] = 0;
+            for(var i = 0; i < huidigBlok.length; i++){
+               for(var j = 0; j < huidigBlok[i].length; j++){
+                    if (huidigBlok[i][j] === 1) {
+                       bord[huidigBlokPos[0]+i][huidigBlokPos[1] + j] = 0;
                     }
                }
             }
@@ -463,24 +464,28 @@ function draw() {
             // Deze functie doet iets aan het begin van elke seconden
             if (frameCount % 50 == 0) {
                 // Beweegt het blok naar beneden
-                curBlockPos[0]++;
+                huidigBlokPos[0]++;
             }
             // Deze functie doet iets aan het einde van elke seconden
             if (frameCount % 50 == 49) {
                 // Berekent heel veel nodige dingen
-                checkCollision();
-                calcRightBottomPos();
-                getBlockRotationOffset();
+                checkBotsing();
+                berekenRechtsOnderPos();
+                berekenRotatieCompensatie();
             }
 
             // Tekent de score
-            stroke(secondaryColor);
-            fill(secondaryColor);
+            stroke(kleur2);
+            fill(kleur2);
             rect(100, 100, 200, 100);
-            stroke(secondaryColor);
-            fill(mainColor);
+            stroke(kleur2);
+            fill(kleur1);
             textSize(50);
             text("Score: " + score, 100, 100, 1000, 100);
+            text("Controls:", 100, 400, 1000, 100);
+            textSize(30);
+            text("Pijljes om te bewegen", 100, 450, 1000, 100);
+            text("X om te draaien", 100, 485, 1000, 100);
             break;
 
         case GAMEOVER: {
@@ -488,28 +493,28 @@ function draw() {
             for (var i = 0; i < 16; i++) {      // bord is 16 hoog
                 for (var j = 0; j < 10; j++) {  // bord is 10 breed
                     if (bord[i][j] === 1) {
-                        stroke(secondaryColor);
-                        fill(mainColor);
+                        stroke(kleur2);
+                        fill(kleur1);
                     } else {
-                        stroke(mainColor);
-                        fill(secondaryColor);
+                        stroke(kleur1);
+                        fill(kleur2);
                     }
                     rect(j * 45 + 426, i * 45, 45, 45); // Tekent veld per blokje
                 }
             }
 
             // Tekent de overlay
-            fill(secondaryColor);
+            fill(kleur2);
             rect(320, 130, 640, 360)
             textSize(100);
-            fill(mainColor);
-            stroke(secondaryColor);
+            fill(kleur1);
+            stroke(kleur2);
             text("GAME OVER", 340, 160, 1000, 1000);
             textSize(50);
             text("Score: " + score, 550, 300, 1000, 1000);
             text("Press enter to restart", 410, 390, 1000, 1000)
-            stroke(mainColor);
-            fill(secondaryColor);
+            stroke(kleur1);
+            fill(kleur2);
             break;
         }   
     }
