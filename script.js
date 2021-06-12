@@ -220,9 +220,17 @@ function keyPressed() {
         // Blok naar beneden
         case 40:
             curBlockPos[0]++;
+            checkCollision();
             break;
         // Hard drop (pijltje naar boven)
         case 38:
+            do {
+                curBlockPos[0]++;
+                checkCollision();
+            } while(curBlockPos[0] != 0)
+            break;
+        // Hard drop (space)
+        case 32:
             do {
                 curBlockPos[0]++;
                 checkCollision();
