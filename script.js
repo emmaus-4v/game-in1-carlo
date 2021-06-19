@@ -46,7 +46,7 @@ var huidigBlokPos = new Array(6);
 /* bord is een 16x10 twee-dimentionale array
  * - bord houd het bord vast, wat gebruikt word om te tekenen en om collision op te checken
 */
- var bord = Array.from(Array(16), () => new Array(10)); // 2D array - 16 hoog en 10 breed
+ var bord = Array.from(Array(20), () => new Array(10)); // 2D array - 16 hoog en 10 breed (staat 20 want collision is kut :))
 
 const TetriminoVariaties = [  // Alle verschillende soorten blokjes die je kunt hebben
     [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]], // Straight tetromino
@@ -83,8 +83,8 @@ function setup() {
 // Reset het spel naar beginstand
 var reset = function () {
     // Zet var bord naar 0
-    for (var i = 0; i < 16; i++) {      // bord is 16 hoog
-        for (var j = 0; j < 10; j++) {  // bord is 10 breed
+    for (var i = 0; i < bord.length; i++) {       
+        for (var j = 0; j < bord[0].length; j++) {
             bord[i][j] = 0;
         }
     }
@@ -258,9 +258,11 @@ var checkBotsing = function () {
 
     // als de huidigBlok een ander blok raakt
     for (var i = 0; i < 4; i++){
-        if(bord[huidigBlokPos[4] + 1][i + huidigBlokPos[1]] === 1 && huidigBlok[huidigBlokPos[4] - huidigBlokPos[0]][i] === 1){
+        for (var j = 0; j < 4; j++) {
+            if (bord[huidigBlokPos[0] + j + 1][i + huidigBlokPos[1]] === 1 && huidigBlok[j][i] === 1) {
                 plaatsBlok();
                 break;
+            };
         };
     };
 
