@@ -94,12 +94,12 @@ var reset = function () {
 }
 
 // Pakt een nieuw huidigBlok
-var newhuidigBlok = function () {
+var newhuidigBlok = function (tetrimino = Math.floor(Math.random() * 7)) {
 
     // Pakt een random waarde van 1 tot 7
     // De const TetriminoVariaties (lijn 29) heeft 7 verschillende arrays voor blokken
     // Deze var neemt dus 1 van de 7 blokken
-    var randomTetrimino = Math.floor(Math.random() * 7); 
+    var randomTetrimino = tetrimino; 
 
     // Zet de net gepakte tetrimino in de huidigBlok
     huidigBlok = TetriminoVariaties[randomTetrimino];
@@ -269,7 +269,7 @@ var checkBotsing = function () {
 
     // Checkt of er lijnen gevuld zijn en haalt ze dan weg
     // Loopt door alle lijnen
-    for(var i = 0; i < 16; i++) {
+    for(var i = 0; i < bord.length; i++) {
         // Checkt of ze vol zijn
         if(bord[i].toString() == "1,1,1,1,1,1,1,1,1,1"){ // Geen idee wrm maar js wilt dat je eerst de array naar een string maakt maar het normaal doen wil hij niet :(
 
@@ -290,7 +290,6 @@ var checkBotsing = function () {
             kleur1 = color(random(0, 255), random(0, 255), random(0, 255));
             // @ts-ignore
             kleur2 = color(random(0, 255) - 200, random(0, 255) - 200, random(0, 255) - 200); 
-            break;
         }
     }
 
@@ -356,10 +355,25 @@ var berekenRotatieCompensatie = function () {
  * Overige functies
  */
 
+// Blokken vasthouden lmao
+var holdBlok;
+var tempHoldBlok;
+var hold = function () {
+    if (-1 < holdBlok && holdBlok < 8) {
+        tempHoldBlok = holdBlok;
+        holdBlok = huidigBlokPos[3];
+        newhuidigBlok(tempHoldBlok);
+
+    } else {
+        holdBlok = huidigBlokPos[3];
+        newhuidigBlok;
+    }
+}
+
 // Controls
 function keyPressed() {
     switch (keyCode) {
-        // blokkenrotatie, keycode 88 staat voor x
+        // blokkenrotatie (x)
         case 88:
             draaiBlok();
             break;
@@ -396,6 +410,10 @@ function keyPressed() {
                 huidigBlokPos[0]++;
                 checkBotsing();
             } while(huidigBlokPos[0] != 0)
+            break;
+        // Hold (c)
+        case 67:
+            hold();
             break;
         // Press enter to play stuff
         case 13:
@@ -488,6 +506,27 @@ function draw() {
             textSize(30);
             text("Pijljes om te bewegen", 100, 450, 1000, 100);
             text("X om te draaien", 100, 485, 1000, 100);
+
+            // Tekent het vastgehouden blok
+            stroke(kleur1);
+            fill(kleur2);
+            rect(100, 200, 100, 100)
+            if (-1 < holdBlok && holdBlok < 8) {
+                for (var y = 0; y < 4; y++) {
+                    for (var x = 0; x < 2; x++) {
+                        if (TetriminoVariaties[holdBlok][x][y] === 1) {
+                            noStroke();
+                            fill(kleur1);
+                        } else {
+                            stroke(kleur2);
+                            fill(kleur2);
+                        }
+                        rect(125 + (25 * x), 210 + (25 * y), 25, 25);
+                    }
+                }
+            }
+            stroke(kleur1);
+            line(100, 300, 200, 300)
             break;
 
         case GAMEOVER: {
