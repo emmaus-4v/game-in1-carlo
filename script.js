@@ -287,9 +287,9 @@ var checkBotsing = function () {
 
             // Veranderd de kleuren
             // @ts-ignore
-            kleur1 = color(random(0, 255), random(0, 255), random(0, 255));
+            kleur1 = color(random(120, 180), random(120, 180), random(120, 180));
             // @ts-ignore
-            kleur2 = color(random(0, 255) - 200, random(0, 255) - 200, random(0, 255) - 200); 
+            kleur2 = color(random(0, 100), random(0, 100), random(0, 100)); 
         }
     }
 
